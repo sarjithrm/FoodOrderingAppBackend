@@ -63,4 +63,30 @@ public class RestExceptionHandler {
                 new ErrorResponse().code(exe.getCode()).message(exe.getErrorMessage()), HttpStatus.UNAUTHORIZED
         );
     }
+
+    /**
+     * Exception handler for SaveAddressException
+     * @param exe SaveAddressException exception
+     * @param request WebRequest
+     * @return ErrorResponse returning message and HTTP status
+     */
+    @ExceptionHandler(SaveAddressException.class)
+    public ResponseEntity<ErrorResponse> saveAddressException(SaveAddressException exe, WebRequest request){
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse().code(exe.getCode()).message(exe.getErrorMessage()), HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    /**
+     * Exception handler for AddressNotFoundException
+     * @param exe AddressNotFoundException exception
+     * @param request WebRequest
+     * @return ErrorResponse returning message and HTTP status
+     */
+    @ExceptionHandler(AddressNotFoundException.class)
+    public ResponseEntity<ErrorResponse> addressNotFoundException(AddressNotFoundException exe, WebRequest request){
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse().code(exe.getCode()).message(exe.getErrorMessage()), HttpStatus.UNAUTHORIZED
+        );
+    }
 }
