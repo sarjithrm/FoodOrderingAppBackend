@@ -145,6 +145,10 @@ public class AddressController {
             statesList.add(stateList);
         }
 
+        if(statesList.isEmpty()){
+            statesList = null;
+        }
+
         StatesListResponse statesListResponse = new StatesListResponse().states(statesList);
         return new ResponseEntity<StatesListResponse>(statesListResponse, HttpStatus.OK);
     }
