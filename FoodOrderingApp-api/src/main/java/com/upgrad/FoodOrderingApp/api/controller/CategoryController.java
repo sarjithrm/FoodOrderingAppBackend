@@ -25,9 +25,6 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @Autowired
-    private ItemType itemType;
-
     @RequestMapping(method = RequestMethod.GET, path = "/category", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CategoriesListResponse> getAllCategoriesOrderedByName(){
         List<CategoryEntity> categories = categoryService.getAllCategoriesOrderedByName();
@@ -51,7 +48,7 @@ public class CategoryController {
 
         for(CategoryItemEntity categoryItem: categoryItems){
             ItemList item = new ItemList().id(UUID.fromString(categoryItem.getItem().getUuid())).itemName(categoryItem.getItem().getItemName())
-                    .price(categoryItem.getItem().getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(itemType.getItemType(categoryItem.getItem().getType())));
+                    .price(categoryItem.getItem().getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(ItemType.getItemType(categoryItem.getItem().getType())));
             items.add(item);
         }
 

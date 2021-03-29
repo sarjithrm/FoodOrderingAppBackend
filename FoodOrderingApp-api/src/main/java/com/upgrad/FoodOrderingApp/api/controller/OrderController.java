@@ -39,9 +39,6 @@ public class OrderController {
     @Autowired
     private ItemService itemService;
 
-    @Autowired
-    private ItemType itemType;
-
     @RequestMapping(method = RequestMethod.POST, path = "/order", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SaveOrderResponse> saveOrder(@RequestHeader(name = "authorization") final String authorization, @RequestBody(required = false) final SaveOrderRequest saveOrderRequest) throws AuthorizationFailedException, CouponNotFoundException, AddressNotFoundException, PaymentMethodNotFoundException, RestaurantNotFoundException, ItemNotFoundException{
         String accessToken = authorization.split("Bearer ")[1];
@@ -53,7 +50,7 @@ public class OrderController {
         PaymentEntity payment       = paymentService.getPaymentByUUID(saveOrderRequest.getPaymentId().toString());
         RestaurantEntity restaurant = restaurantService.restaurantByUUID(saveOrderRequest.getRestaurantId().toString());
 
-        OrdersEntity order = new OrdersEntity();
+        OrderEntity order = new OrderEntity();
 
         order.setUuid(UUID.randomUUID().toString());
         order.setBill(saveOrderRequest.getBill());
@@ -67,20 +64,18 @@ public class OrderController {
         ZonedDateTime now = ZonedDateTime.now();
         order.setDate(now);
 
-        List<OrderItemEntity> orderItems = new ArrayList<>();
+        OrderItemEntity orderItem = new OrderItemEntity();
         for(ItemQuantity item: saveOrderRequest.getItemQuantities()){
-            OrderItemEntity orderItem = new OrderItemEntity();
+
             orderItem.setOrder(order);
             ItemEntity menuItem = itemService.getItem(item.getItemId().toString());
             orderItem.setItem(menuItem);
             orderItem.setQuantity(item.getQuantity());
             orderItem.setPrice(item.getPrice());
-
-            orderItems.add(orderItem);
         }
 
-        OrdersEntity newOrder = orderService.saveOrder(order);
-        orderService.saveOrderItems(orderItems);
+        OrderEntity newOrder = orderService.saveOrder(order);
+        OrderItemEntity orderItemEntities = orderService.saveOrderItem(orderItem);
         SaveOrderResponse saveOrderResponse = new SaveOrderResponse().id(newOrder.getUuid())
                 .status("ORDER SUCCESSFULLY PLACED");
 
@@ -108,8 +103,8 @@ public class OrderController {
 
         List<OrderList> ordersList = new ArrayList<>();
 
-        List<OrdersEntity> orders = orderService.getOrdersByCustomers(customer.getUuid());
-        for(OrdersEntity order: orders){
+        List<OrderEntity> orders = orderService.getOrdersByCustomers(customer.getUuid());
+        for(OrderEntity order: orders){
             OrderListAddressState state = new OrderListAddressState().id(UUID.fromString(order.getAddress().getState().getUuid()))
                     .stateName(order.getAddress().getState().getStateName());
 
@@ -139,7 +134,7 @@ public class OrderController {
                 ItemQuantityResponseItem itemDetails = new ItemQuantityResponseItem().id(UUID.fromString(item.getItem().getUuid()))
                         .itemName(item.getItem().getItemName())
                         .itemPrice(item.getItem().getPrice())
-                        .type(ItemQuantityResponseItem.TypeEnum.valueOf(itemType.getItemType(item.getItem().getType())));
+                        .type(ItemQuantityResponseItem.TypeEnum.valueOf(ItemType.getItemType(item.getItem().getType())));
 
                 ItemQuantityResponse itemResponse = new ItemQuantityResponse().item(itemDetails)
                         .quantity(item.getQuantity())

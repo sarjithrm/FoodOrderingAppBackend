@@ -44,16 +44,17 @@ public class RestaurantEntity implements Serializable {
 
     @Column(name = "average_price_for_two")
     @NotNull
-    private Integer averagePriceForTwo;
+    private Integer avgPrice;
 
     @Column(name = "number_of_customers_rated")
     @NotNull
-    private Integer numberOfCustomersRated;
+    private Integer numberCustomersRated;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private AddressEntity addressEntity;
+
 
     public long getId() {
         return id;
@@ -95,20 +96,20 @@ public class RestaurantEntity implements Serializable {
         this.customerRating = customerRating;
     }
 
-    public Integer getAveragePriceForTwo() {
-        return averagePriceForTwo;
+    public Integer getAvgPrice() {
+        return avgPrice;
     }
 
-    public void setAveragePriceForTwo(Integer averagePriceForTwo) {
-        this.averagePriceForTwo = averagePriceForTwo;
+    public void setAvgPrice(Integer averagePriceForTwo) {
+        this.avgPrice = averagePriceForTwo;
     }
 
     public Integer getNumberOfCustomersRated() {
-        return numberOfCustomersRated;
+        return numberCustomersRated;
     }
 
-    public void setNumberOfCustomersRated(Integer numberOfCustomersRated) {
-        this.numberOfCustomersRated = numberOfCustomersRated;
+    public void setNumberCustomersRated(Integer numberOfCustomersRated) {
+        this.numberCustomersRated = numberOfCustomersRated;
     }
 
     public AddressEntity getAddress() {

@@ -3,9 +3,8 @@ package com.upgrad.FoodOrderingApp.service.dao;
 import com.upgrad.FoodOrderingApp.service.entity.CouponEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.OrderItemEntity;
-import com.upgrad.FoodOrderingApp.service.entity.OrdersEntity;
+import com.upgrad.FoodOrderingApp.service.entity.OrderEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -18,25 +17,24 @@ public class OrderDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public OrdersEntity saveOrder(final OrdersEntity order){
+    public OrderEntity saveOrder(final OrderEntity order){
         entityManager.persist(order);
         return order;
     }
 
-    public void saveOrderItems(final List<OrderItemEntity> orderItems){
-        for(OrderItemEntity item: orderItems){
-            entityManager.persist(item);
-        }
+    public OrderItemEntity saveOrderItem(final OrderItemEntity orderItem){
+        entityManager.persist(orderItem);
+        return orderItem;
     }
 
-    public List<OrdersEntity> getCustomerOrders(final CustomerEntity customer){
-        List<OrdersEntity> orders = entityManager.createNamedQuery("getCustomerOrders", OrdersEntity.class)
+    public List<OrderEntity> getCustomerOrders(final CustomerEntity customer){
+        List<OrderEntity> orders = entityManager.createNamedQuery("getCustomerOrders", OrderEntity.class)
                 .setParameter("customer", customer)
                 .getResultList();
         return orders;
     }
 
-    public List<OrderItemEntity> getOrderItems(final OrdersEntity order){
+    public List<OrderItemEntity> getOrderItems(final OrderEntity order){
         List<OrderItemEntity> orderItems = entityManager.createNamedQuery("getOrdersItem", OrderItemEntity.class)
                 .setParameter("order", order)
                 .getResultList();

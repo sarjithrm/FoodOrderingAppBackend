@@ -37,9 +37,6 @@ public class RestaurantController {
     @Autowired
     private CustomerService customerService;
 
-    @Autowired
-    private ItemType itemType;
-
     public RestaurantDetailsResponseAddress getRestaurantDetails(final RestaurantEntity restaurant){
         RestaurantDetailsResponseAddressState state = new RestaurantDetailsResponseAddressState().id(UUID.fromString(restaurant.getAddress().getState().getUuid()))
                 .stateName(restaurant.getAddress().getState().getStateName());
@@ -72,7 +69,7 @@ public class RestaurantController {
 
             RestaurantList restaurantList = new RestaurantList().id(UUID.fromString(restaurant.getUuid())).restaurantName(restaurant.getRestaurantName())
                     .photoURL(restaurant.getPhotoUrl()).customerRating(BigDecimal.valueOf(restaurant.getCustomerRating()))
-                    .averagePrice(restaurant.getAveragePriceForTwo()).numberCustomersRated(restaurant.getNumberOfCustomersRated())
+                    .averagePrice(restaurant.getAvgPrice()).numberCustomersRated(restaurant.getNumberOfCustomersRated())
                     .address(address).categories(categoriesName.toString());
             restaurantsList.add(restaurantList);
         }
@@ -112,7 +109,7 @@ public class RestaurantController {
             List<ItemList> itemsList = new ArrayList<>();
             for(ItemEntity itemEntity: items){
                 ItemList item = new ItemList().id(UUID.fromString(itemEntity.getUuid())).itemName(itemEntity.getItemName())
-                        .price(itemEntity.getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(itemType.getItemType(itemEntity.getType())));
+                        .price(itemEntity.getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(ItemType.getItemType(itemEntity.getType())));
                 itemsList.add(item);
             }
             Collections.sort(itemsList, new Comparator<ItemList>() {
@@ -137,7 +134,7 @@ public class RestaurantController {
         RestaurantDetailsResponse response = new RestaurantDetailsResponse().id(UUID.fromString(restaurant.getUuid()))
                 .restaurantName(restaurant.getRestaurantName())
                 .photoURL(restaurant.getPhotoUrl()).customerRating(BigDecimal.valueOf(restaurant.getCustomerRating()))
-                .averagePrice(restaurant.getAveragePriceForTwo()).numberCustomersRated(restaurant.getNumberOfCustomersRated())
+                .averagePrice(restaurant.getAvgPrice()).numberCustomersRated(restaurant.getNumberOfCustomersRated())
                 .address(address).categories(categoriesList);
         return new ResponseEntity<RestaurantDetailsResponse>(response, HttpStatus.OK);
     }

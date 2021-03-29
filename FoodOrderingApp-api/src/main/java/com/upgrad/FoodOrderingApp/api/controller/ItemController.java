@@ -27,9 +27,6 @@ public class ItemController {
     @Autowired
     private RestaurantService restaurantService;
 
-    @Autowired
-    private ItemType itemType;
-
     @RequestMapping(method = RequestMethod.GET, path = "/item/restaurant/{restaurant_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ItemListResponse> getItems(@PathVariable final String restaurant_id) throws RestaurantNotFoundException{
         RestaurantEntity restaurant = restaurantService.restaurantByUUID(restaurant_id);
@@ -38,7 +35,7 @@ public class ItemController {
 
         for(ItemEntity item: topItems){
             ItemList itemList = new ItemList().id(UUID.fromString(item.getUuid())).itemName(item.getItemName())
-                    .price(item.getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(itemType.getItemType(item.getType())));
+                    .price(item.getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(ItemType.getItemType(item.getType())));
             itemListResponse.add(itemList);
         }
 

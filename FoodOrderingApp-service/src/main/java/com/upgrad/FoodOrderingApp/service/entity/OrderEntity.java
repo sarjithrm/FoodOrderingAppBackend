@@ -11,10 +11,10 @@ import java.time.ZonedDateTime;
 @Table(name = "orders")
 @NamedQueries(
         {
-                @NamedQuery(name = "getCustomerOrders", query = "select o from OrdersEntity o where o.customerEntity = :customer order by o.date desc")
+                @NamedQuery(name = "getCustomerOrders", query = "select o from OrderEntity o where o.customerEntity = :customer order by o.date desc")
         }
 )
-public class OrdersEntity implements Serializable {
+public class OrderEntity implements Serializable {
 
     @Id
     @Column(name = "id")

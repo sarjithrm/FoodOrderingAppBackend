@@ -80,7 +80,7 @@ public class RestaurantService {
 
         double avgCustomerRating = (restaurant.getCustomerRating() + customerRating)/2;
         restaurant.setCustomerRating(avgCustomerRating);
-        restaurant.setNumberOfCustomersRated(restaurant.getNumberOfCustomersRated() + 1);
+        restaurant.setNumberCustomersRated(restaurant.getNumberOfCustomersRated() + 1);
 
         return restaurantDao.updateRestaurant(restaurant);
     }
