@@ -3,6 +3,7 @@ package com.upgrad.FoodOrderingApp.service.dao;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import org.springframework.stereotype.Repository;
+import sun.util.resources.cldr.ext.CurrencyNames_zh_Hans_SG;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -80,5 +81,21 @@ public class CustomerDao {
      */
     public void updateCustomer(final CustomerEntity customerEntity){
         entityManager.merge(customerEntity);
+    }
+
+    /**
+     * get customer by Id
+     * @param customerId
+     * @return customer
+     */
+    public CustomerEntity getCustomerByUUID(final String customerId){
+        try{
+            CustomerEntity customer = entityManager.createNamedQuery("getCustomerById", CustomerEntity.class)
+                    .setParameter("uuid", customerId)
+                    .getSingleResult();
+            return customer;
+        }catch (NoResultException nre){
+            return null;
+        }
     }
 }
