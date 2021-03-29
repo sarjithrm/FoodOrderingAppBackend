@@ -1,5 +1,6 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -8,6 +9,12 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "category_item")
+@NamedQueries(
+        {
+                @NamedQuery(name = "getCategoryByItem", query = "select ci from CategoryItemEntity ci where ci.itemEntity = :item"),
+                @NamedQuery(name = "getItemsByCategory", query = "select ci from CategoryItemEntity ci where ci.categoryEntity = :category")
+        }
+)
 public class CategoryItemEntity implements Serializable {
 
     @Id
@@ -15,7 +22,7 @@ public class CategoryItemEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ItemEntity itemEntity;

@@ -7,6 +7,12 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "category")
+@NamedQueries(
+        {
+                @NamedQuery(name = "getCategoryByUuid", query = "select c from CategoryEntity c where c.uuid = :uuid"),
+                @NamedQuery(name = "getCategories", query = "select c from CategoryEntity c order by c.categoryName")
+        }
+)
 public class CategoryEntity implements Serializable {
 
     @Id

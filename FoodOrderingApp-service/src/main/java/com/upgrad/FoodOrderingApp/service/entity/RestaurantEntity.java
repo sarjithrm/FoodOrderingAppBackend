@@ -10,6 +10,13 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "restaurant")
+@NamedQueries(
+        {
+                @NamedQuery(name = "getRestaurants", query = "select r from RestaurantEntity r order by r.customerRating desc"),
+                @NamedQuery(name = "getRestaurantsByName", query = "select r from RestaurantEntity r where r.restaurantName LIKE :restaurantName order by r.restaurantName"),
+                @NamedQuery(name = "getRestaurantsByUuid", query = "select r from RestaurantEntity r where r.uuid = :uuid")
+        }
+)
 public class RestaurantEntity implements Serializable {
 
     @Id
@@ -33,8 +40,7 @@ public class RestaurantEntity implements Serializable {
     private String photoUrl;
 
     @Column(name = "customer_rating")
-    @NotNull
-    private Integer customerRating;
+    private double customerRating;
 
     @Column(name = "average_price_for_two")
     @NotNull
@@ -81,11 +87,11 @@ public class RestaurantEntity implements Serializable {
         this.photoUrl = photoUrl;
     }
 
-    public Integer getCustomerRating() {
+    public double getCustomerRating() {
         return customerRating;
     }
 
-    public void setCustomerRating(Integer customerRating) {
+    public void setCustomerRating(double customerRating) {
         this.customerRating = customerRating;
     }
 

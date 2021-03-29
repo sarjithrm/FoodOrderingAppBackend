@@ -70,19 +70,12 @@ public class CustomerService {
 
     /**
      * authenticate - Customer Authentication and Access-Token generation
-     * @param authorization
+     * @param username, password
      * @return CustomerAuthEntity
      * @throws AuthenticationFailedException
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerAuthEntity authenticate(final String authorization) throws AuthenticationFailedException {
-        if(Pattern.compile("^Basic [0-9]{10}:[a-zA-Z0-9#@$%&*!^].*$").matcher(authorization).equals("false")){
-            throw new AuthenticationFailedException("ATH-003", "Incorrect format o decoded customer name and password");
-        }
-        String[] decodedArray   =   authorization.split(":");
-        String username         =   decodedArray[0].split("Basic ")[1];
-        String password         =   decodedArray[1];
-
+    public CustomerAuthEntity authenticate(final String username, final String password) throws AuthenticationFailedException {
         CustomerEntity customer = customerDao.getContactNumber(username);
         if(customer == null){
             throw new AuthenticationFailedException("ATH-001", "this contact number has not been registered!");
@@ -119,7 +112,7 @@ public class CustomerService {
      * @throws AuthorizationFailedException
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerAuthEntity authorize(final String accessToken) throws AuthorizationFailedException {
+    public CustomerEntity getCustomer(final String accessToken) throws AuthorizationFailedException {
         CustomerAuthEntity customerAuthEntity = customerDao.getCustomerAccessToken(accessToken);
         if(customerAuthEntity == null){
             throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
@@ -134,7 +127,7 @@ public class CustomerService {
             throw new AuthorizationFailedException("ATHR-003", "Your session is expired. Log in again to access this endpoint.");
         }
 
-        return customerAuthEntity;
+        return customerAuthEntity.getCustomer();
     }
 
     /**
@@ -145,8 +138,9 @@ public class CustomerService {
      */
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAuthEntity logout(final String accessToken) throws AuthorizationFailedException {
-        CustomerAuthEntity customerAuthEntity = authorize(accessToken);
+        CustomerEntity customerEntity = getCustomer(accessToken);
 
+        CustomerAuthEntity customerAuthEntity = customerDao.getCustomerAccessToken(accessToken);
         final ZonedDateTime now = ZonedDateTime.now();
         customerAuthEntity.setLogoutAt(now);
         customerDao.updateCustomerAuth(customerAuthEntity);
@@ -156,24 +150,17 @@ public class CustomerService {
 
     /**
      * update Customer details
-     * @param accessToken
-     * @param firstname
-     * @param lastname
+     * @param customer
      * @return CustomerEntity
      * @throws AuthorizationFailedException
      * @throws UpdateCustomerException
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerEntity updateCustomer(final String accessToken, final String firstname, final String lastname) throws AuthorizationFailedException, UpdateCustomerException{
-        if(firstname.equals("")){
+    public CustomerEntity updateCustomer(final CustomerEntity customer) throws AuthorizationFailedException, UpdateCustomerException{
+        if(customer.getFirstname().equals("")){
             throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
         }
 
-        CustomerAuthEntity customerAuthEntity = authorize(accessToken);
-        CustomerEntity customer = customerAuthEntity.getCustomer();
-
-        customer.setFirstname(firstname);
-        customer.setLastname(lastname);
         customerDao.updateCustomer(customer);
 
         return customer;
@@ -189,15 +176,12 @@ public class CustomerService {
      * @throws UpdateCustomerException
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerEntity changePassword(final String accessToken, final String oldPassword, final String newPassword) throws AuthorizationFailedException, UpdateCustomerException{
+    public CustomerEntity updateCustomerPassword(final String accessToken, final String oldPassword, final String newPassword, final CustomerEntity customer) throws AuthorizationFailedException, UpdateCustomerException{
         String passwordRegex        =   "([A-Z]+[0-9]+[a-z]*[#@$%&*!^]+){8,}";
 
         if(oldPassword.equals("") || newPassword.equals("")){
             throw new UpdateCustomerException("UCR-003", "No field should be empty");
         }
-
-        CustomerAuthEntity customerAuthEntity = authorize(accessToken);
-        CustomerEntity customer = customerAuthEntity.getCustomer();
 
         if(Pattern.compile(passwordRegex).matcher(newPassword).equals("false")){
             throw new UpdateCustomerException("UCR-001", "Weak password!");
@@ -212,6 +196,17 @@ public class CustomerService {
         customer.setPassword(encryptedText[1]);
         customerDao.updateCustomer(customer);
 
+        return customer;
+    }
+
+    /**
+     * get customer by Id
+     * @param customerId
+     * @return customer
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerEntity getCustomerByUUID(final String customerId){
+        CustomerEntity customer = customerDao.getCustomerByUUID(customerId);
         return customer;
     }
 }
