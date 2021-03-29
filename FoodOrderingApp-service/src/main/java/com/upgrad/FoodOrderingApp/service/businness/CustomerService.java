@@ -42,7 +42,7 @@ public class CustomerService {
 
         CustomerEntity customer = customerDao.getContactNumber(customerEntity.getContactNumber());
 
-        if(customerEntity.getFirstname().equals("") || customerEntity.getEmail().equals("") || customerEntity.getContactNumber().equals("") || customerEntity.getPassword().equals("")){
+        if(customerEntity.getFirstName().equals("") || customerEntity.getEmail().equals("") || customerEntity.getContactNumber().equals("") || customerEntity.getPassword().equals("")){
             throw new SignUpRestrictedException("SGR-005", "Except last name all fields should be filled");
         }
         if(customer != null){
@@ -157,7 +157,7 @@ public class CustomerService {
      */
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerEntity updateCustomer(final CustomerEntity customer) throws AuthorizationFailedException, UpdateCustomerException{
-        if(customer.getFirstname().equals("")){
+        if(customer.getFirstName().equals("")){
             throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
         }
 
@@ -168,7 +168,7 @@ public class CustomerService {
 
     /**
      * Change Customer Password
-     * @param accessToken
+     * @param customer
      * @param oldPassword
      * @param newPassword
      * @return CustomerEntity
@@ -176,7 +176,7 @@ public class CustomerService {
      * @throws UpdateCustomerException
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerEntity updateCustomerPassword(final String accessToken, final String oldPassword, final String newPassword, final CustomerEntity customer) throws AuthorizationFailedException, UpdateCustomerException{
+    public CustomerEntity updateCustomerPassword(final String oldPassword, final String newPassword, final CustomerEntity customer) throws AuthorizationFailedException, UpdateCustomerException{
         String passwordRegex        =   "([A-Z]+[0-9]+[a-z]*[#@$%&*!^]+){8,}";
 
         if(oldPassword.equals("") || newPassword.equals("")){

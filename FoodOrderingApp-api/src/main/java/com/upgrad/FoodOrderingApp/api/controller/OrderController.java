@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,7 +62,7 @@ public class OrderController {
         order.setCustomer(customer);
         order.setRestaurant(restaurant);
 
-        ZonedDateTime now = ZonedDateTime.now();
+        Date now = new Date();
         order.setDate(now);
 
         OrderItemEntity orderItem = new OrderItemEntity();
@@ -120,8 +121,8 @@ public class OrderController {
                     .percent(order.getCoupon().getPercent());
 
             OrderListCustomer orderCustomer = new OrderListCustomer().id(UUID.fromString(order.getCustomer().getUuid()))
-                    .firstName(order.getCustomer().getFirstname())
-                    .lastName(order.getCustomer().getLastname())
+                    .firstName(order.getCustomer().getFirstName())
+                    .lastName(order.getCustomer().getLastName())
                     .emailAddress(order.getCustomer().getEmail())
                     .contactNumber(order.getCustomer().getContactNumber());
 
@@ -134,7 +135,7 @@ public class OrderController {
                 ItemQuantityResponseItem itemDetails = new ItemQuantityResponseItem().id(UUID.fromString(item.getItem().getUuid()))
                         .itemName(item.getItem().getItemName())
                         .itemPrice(item.getItem().getPrice())
-                        .type(ItemQuantityResponseItem.TypeEnum.valueOf(ItemType.getItemType(item.getItem().getType())));
+                        .type(ItemQuantityResponseItem.TypeEnum.valueOf(ItemType.getItemType(item.getItem().getType().toString())));
 
                 ItemQuantityResponse itemResponse = new ItemQuantityResponse().item(itemDetails)
                         .quantity(item.getQuantity())

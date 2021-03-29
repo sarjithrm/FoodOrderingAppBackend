@@ -35,7 +35,7 @@ public class ItemController {
 
         for(ItemEntity item: topItems){
             ItemList itemList = new ItemList().id(UUID.fromString(item.getUuid())).itemName(item.getItemName())
-                    .price(item.getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(ItemType.getItemType(item.getType())));
+                    .price(item.getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(ItemType.getItemType(item.getType().toString())));
             itemListResponse.add(itemList);
         }
 

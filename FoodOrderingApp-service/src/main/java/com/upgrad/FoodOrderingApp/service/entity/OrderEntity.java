@@ -6,6 +6,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "orders")
@@ -40,7 +41,7 @@ public class OrderEntity implements Serializable {
 
     @Column(name = "date")
     @NotNull
-    private ZonedDateTime date;
+    private Date date;
 
     @ManyToOne
     @JoinColumn(name = "payment_id")
@@ -57,6 +58,21 @@ public class OrderEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private RestaurantEntity restaurantEntity;
+
+    public OrderEntity() {
+    }
+
+    public OrderEntity(String uuid, double bill, CouponEntity couponEntity, double discount, Date date, PaymentEntity payment, CustomerEntity customerEntity, AddressEntity addressEntity, RestaurantEntity restaurantEntity) {
+        this.uuid = uuid;
+        this.bill = BigDecimal.valueOf(bill);
+        this.couponEntity = couponEntity;
+        this.discount = BigDecimal.valueOf(discount);
+        this.date = date;
+        this.payment = payment;
+        this.customerEntity = customerEntity;
+        this.addressEntity = addressEntity;
+        this.restaurantEntity = restaurantEntity;
+    }
 
     public long getId() {
         return id;
@@ -98,11 +114,11 @@ public class OrderEntity implements Serializable {
         this.discount = discount;
     }
 
-    public ZonedDateTime getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(ZonedDateTime date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

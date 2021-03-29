@@ -48,7 +48,7 @@ public class CategoryController {
 
         for(CategoryItemEntity categoryItem: categoryItems){
             ItemList item = new ItemList().id(UUID.fromString(categoryItem.getItem().getUuid())).itemName(categoryItem.getItem().getItemName())
-                    .price(categoryItem.getItem().getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(ItemType.getItemType(categoryItem.getItem().getType())));
+                    .price(categoryItem.getItem().getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(ItemType.getItemType(categoryItem.getItem().getType().toString())));
             items.add(item);
         }
 

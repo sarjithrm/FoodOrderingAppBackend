@@ -109,7 +109,7 @@ public class RestaurantController {
             List<ItemList> itemsList = new ArrayList<>();
             for(ItemEntity itemEntity: items){
                 ItemList item = new ItemList().id(UUID.fromString(itemEntity.getUuid())).itemName(itemEntity.getItemName())
-                        .price(itemEntity.getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(ItemType.getItemType(itemEntity.getType())));
+                        .price(itemEntity.getPrice()).itemType(ItemList.ItemTypeEnum.valueOf(ItemType.getItemType(itemEntity.getType().toString())));
                 itemsList.add(item);
             }
             Collections.sort(itemsList, new Comparator<ItemList>() {

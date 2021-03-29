@@ -13,8 +13,10 @@ public enum ItemType {
     public static String getItemType(String type){
         if(type.equals("0")){
             return ItemType.VEG.value;
-        }else {
+        }else if(type.equals("1")){
             return ItemType.NON_VEG.value;
+        }else{
+            return type;
         }
     }
 

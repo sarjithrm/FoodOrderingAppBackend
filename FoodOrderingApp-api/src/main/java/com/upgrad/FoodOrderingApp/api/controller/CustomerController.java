@@ -40,8 +40,8 @@ public class CustomerController {
         final CustomerEntity customerEntity = new CustomerEntity();
 
         customerEntity.setUuid(UUID.randomUUID().toString());
-        customerEntity.setFirstname(signupCustomerRequest.getFirstName());
-        customerEntity.setLastname(signupCustomerRequest.getLastName());
+        customerEntity.setFirstName(signupCustomerRequest.getFirstName());
+        customerEntity.setLastName(signupCustomerRequest.getLastName());
         customerEntity.setEmail(signupCustomerRequest.getEmailAddress());
         customerEntity.setContactNumber(signupCustomerRequest.getContactNumber());
         customerEntity.setPassword(signupCustomerRequest.getPassword());
@@ -75,7 +75,7 @@ public class CustomerController {
         CustomerAuthEntity customerAuthEntity = customerService.authenticate(username, password);
         CustomerEntity customer = customerAuthEntity.getCustomer();
 
-        LoginResponse loginResponse = new LoginResponse().id(customer.getUuid()).firstName(customer.getFirstname()).lastName(customer.getLastname())
+        LoginResponse loginResponse = new LoginResponse().id(customer.getUuid()).firstName(customer.getFirstName()).lastName(customer.getLastName())
                 .contactNumber(customer.getContactNumber()).emailAddress(customer.getEmail()).message("LOGGED IN SUCCESSFULLY");
 
         HttpHeaders headers = new HttpHeaders();
@@ -118,13 +118,13 @@ public class CustomerController {
 
         CustomerEntity customer = customerService.getCustomer(accessToken);
 
-        customer.setFirstname(updateCustomerRequest.getFirstName());
-        customer.setLastname(updateCustomerRequest.getLastName());
+        customer.setFirstName(updateCustomerRequest.getFirstName());
+        customer.setLastName(updateCustomerRequest.getLastName());
 
         CustomerEntity customerEntity = customerService.updateCustomer(customer);
 
         UpdateCustomerResponse updateCustomerResponse = new UpdateCustomerResponse().id(customerEntity.getUuid())
-                .firstName(customerEntity.getFirstname()).lastName(customerEntity.getLastname()).status("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
+                .firstName(customerEntity.getFirstName()).lastName(customerEntity.getLastName()).status("CUSTOMER DETAILS UPDATED SUCCESSFULLY");
 
         return new ResponseEntity<UpdateCustomerResponse>(updateCustomerResponse, HttpStatus.OK);
     }
@@ -143,7 +143,7 @@ public class CustomerController {
 
         CustomerEntity customer = customerService.getCustomer(accessToken);
 
-        CustomerEntity customerEntity = customerService.updateCustomerPassword(accessToken, updatePasswordRequest.getOldPassword(), updatePasswordRequest.getNewPassword(), customer);
+        CustomerEntity customerEntity = customerService.updateCustomerPassword(updatePasswordRequest.getOldPassword(), updatePasswordRequest.getNewPassword(), customer);
 
         UpdatePasswordResponse updatePasswordResponse = new UpdatePasswordResponse().id(customerEntity.getUuid()).status("CUSTOMER PASSWORD UPDATED SUCCESSFULLY");
 
