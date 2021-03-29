@@ -112,7 +112,7 @@ public class AddressService {
      * @return list of states
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public ArrayList<StateEntity> getAllStates(){
+    public List<StateEntity> getAllStates(){
         return addressDao.getStates();
     }
 
