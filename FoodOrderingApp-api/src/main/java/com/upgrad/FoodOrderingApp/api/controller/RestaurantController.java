@@ -41,7 +41,7 @@ public class RestaurantController {
         RestaurantDetailsResponseAddressState state = new RestaurantDetailsResponseAddressState().id(UUID.fromString(restaurant.getAddress().getState().getUuid()))
                 .stateName(restaurant.getAddress().getState().getStateName());
         RestaurantDetailsResponseAddress address = new RestaurantDetailsResponseAddress().id(UUID.fromString(restaurant.getAddress().getUuid()))
-                .flatBuildingName(restaurant.getAddress().getFlatBuilNumber())
+                .flatBuildingName(restaurant.getAddress().getFlatBuilNo())
                 .city(restaurant.getAddress().getCity()).locality(restaurant.getAddress().getLocality()).pincode(restaurant.getAddress().getPincode())
                 .state(state);
 

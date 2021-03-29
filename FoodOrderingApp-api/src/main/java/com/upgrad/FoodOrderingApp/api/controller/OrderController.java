@@ -110,7 +110,7 @@ public class OrderController {
                     .stateName(order.getAddress().getState().getStateName());
 
             OrderListAddress address = new OrderListAddress().id(UUID.fromString(order.getAddress().getUuid()))
-                    .flatBuildingName(order.getAddress().getFlatBuilNumber())
+                    .flatBuildingName(order.getAddress().getFlatBuilNo())
                     .locality(order.getAddress().getLocality())
                     .city(order.getAddress().getCity())
                     .pincode(order.getAddress().getPincode())
