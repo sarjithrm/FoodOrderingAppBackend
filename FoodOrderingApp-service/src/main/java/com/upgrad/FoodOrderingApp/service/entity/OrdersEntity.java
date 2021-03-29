@@ -4,10 +4,16 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "orders")
+@NamedQueries(
+        {
+                @NamedQuery(name = "getCustomerOrders", query = "select o from OrdersEntity o where o.customerEntity = :customer order by o.date desc")
+        }
+)
 public class OrdersEntity implements Serializable {
 
     @Id
@@ -22,7 +28,7 @@ public class OrdersEntity implements Serializable {
 
     @Column(name = "bill")
     @NotNull
-    private Integer bill;
+    private BigDecimal bill;
 
     @ManyToOne
     @JoinColumn(name = "coupon_id")
@@ -30,7 +36,7 @@ public class OrdersEntity implements Serializable {
 
     @Column(name = "discount")
     @NotNull
-    private Integer discount;
+    private BigDecimal discount;
 
     @Column(name = "date")
     @NotNull
@@ -68,11 +74,11 @@ public class OrdersEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public Integer getBill() {
+    public BigDecimal getBill() {
         return bill;
     }
 
-    public void setBill(Integer bill) {
+    public void setBill(BigDecimal bill) {
         this.bill = bill;
     }
 
@@ -84,11 +90,11 @@ public class OrdersEntity implements Serializable {
         this.couponEntity = couponEntity;
     }
 
-    public Integer getDiscount() {
+    public BigDecimal getDiscount() {
         return discount;
     }
 
-    public void setDiscount(Integer discount) {
+    public void setDiscount(BigDecimal discount) {
         this.discount = discount;
     }
 

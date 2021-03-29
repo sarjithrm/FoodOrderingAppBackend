@@ -15,7 +15,8 @@ import java.util.Objects;
 @Table(name = "customer")
 @NamedQueries(
         {
-                @NamedQuery(name = "getContactNumber", query = "select c from CustomerEntity c where c.contactNumber = :contactNumber")
+                @NamedQuery(name = "getContactNumber", query = "select c from CustomerEntity c where c.contactNumber = :contactNumber"),
+                @NamedQuery(name = "getCustomerByUUID", query = "select c from CustomerEntity c where c.uuid = :uuid")
         }
 )
 public class CustomerEntity implements Serializable {
