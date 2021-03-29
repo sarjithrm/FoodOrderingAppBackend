@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class AddressDao {
@@ -44,17 +45,19 @@ public class AddressDao {
     }
 
     /**
-     * Get all saved addresses
-     * @return ArrayList<AddressEntity>
+     * get Addresses of customer
+     * @param customer
+     * @return List<CustomerAddressEntity>
      */
-    public ArrayList<AddressEntity> getAddresses(){
-        ArrayList<AddressEntity> addresses = (ArrayList<AddressEntity>) entityManager.createNamedQuery("getAddresses", AddressEntity.class)
+    public List<CustomerAddressEntity> getAddresses(final CustomerEntity customer){
+        List<CustomerAddressEntity> addresses =  entityManager.createNamedQuery("getAddressOfCustomer", CustomerAddressEntity.class)
+                .setParameter("customer", customer)
                 .getResultList();
         return addresses;
     }
 
     /**
-     * Get Address
+     * get Address By Uuid
      * @param addressUuid
      * @return AddressEntity
      */
@@ -69,7 +72,7 @@ public class AddressDao {
     }
 
     /**
-     * Get customer address mapping
+     * get Customer Address Map
      * @param address
      * @return CustomerAddressEntity
      */
@@ -84,7 +87,7 @@ public class AddressDao {
     }
 
     /**
-     * Delete Address
+     * delete Address
      * @param address
      * @return AddressEntity
      */
@@ -94,7 +97,7 @@ public class AddressDao {
     }
 
     /**
-     * Get states
+     * get all states
      * @return ArrayList<StateEntity>
      */
     public ArrayList<StateEntity> getStates(){

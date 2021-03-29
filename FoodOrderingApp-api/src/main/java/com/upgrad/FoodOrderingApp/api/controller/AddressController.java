@@ -4,6 +4,8 @@ import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.AddressService;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/")
@@ -26,6 +29,9 @@ public class AddressController {
 
     @Autowired
     private AddressService addressService;
+
+    @Autowired
+    private CustomerService customerService;
 
     /**
      * Address Registration
@@ -40,22 +46,36 @@ public class AddressController {
     public ResponseEntity<SaveAddressResponse> saveAddress(@RequestHeader(name = "authorization") final String authorization, @RequestBody(required = false) final SaveAddressRequest saveAddressRequest) throws AuthorizationFailedException, SaveAddressException, AddressNotFoundException{
         String accessToken = authorization.split("Bearer ")[1];
 
+        CustomerEntity customer = customerService.getCustomer(accessToken);
+
+        String pincodeRegex =   "^[0-9]{6}$";
+
+        if(saveAddressRequest.getFlatBuildingName().equals("") || saveAddressRequest.getCity().equals("") || saveAddressRequest.getLocality().equals("") || saveAddressRequest.getPincode().equals("") || saveAddressRequest.getStateUuid().equals("")){
+            throw new SaveAddressException("SAR-001", "No field can be empty");
+        }
+        if(Pattern.compile(pincodeRegex).matcher(saveAddressRequest.getPincode()).equals("false")){
+            throw new SaveAddressException("SAR-002", "Invalid pincode");
+        }
+
+        StateEntity state = addressService.getStateByUUID(saveAddressRequest.getStateUuid());
+
         final AddressEntity address = new AddressEntity();
 
+        address.setUuid(UUID.randomUUID().toString());
         address.setFlatBuilNumber(saveAddressRequest.getFlatBuildingName());
         address.setCity(saveAddressRequest.getCity());
         address.setLocality(saveAddressRequest.getLocality());
         address.setPincode(saveAddressRequest.getPincode());
-        address.setState(null);
+        address.setState(state);
 
-        final AddressEntity newAddress = addressService.saveAddress(accessToken, address, saveAddressRequest.getStateUuid());
+        final AddressEntity newAddress = addressService.saveAddress(address, customer);
 
         SaveAddressResponse saveAddressResponse = new SaveAddressResponse().id(newAddress.getUuid()).status("ADDRESS SUCCESSFULLY REGISTERED");
         return new ResponseEntity<SaveAddressResponse>(saveAddressResponse, HttpStatus.CREATED);
     }
 
     /**
-     * Fetch All saved addresses
+     * get address of customer
      * @param authorization
      * @return ResponseEntity<AddressListResponse>
      * @throws AuthorizationFailedException
@@ -64,7 +84,9 @@ public class AddressController {
     public ResponseEntity<AddressListResponse> getAddress(@RequestHeader(name = "authorization") final String authorization) throws AuthorizationFailedException{
         String accessToken = authorization.split("Bearer ")[1];
 
-        List<AddressEntity> addresses   =   addressService.getSavedAddresses(accessToken);
+        CustomerEntity customer = customerService.getCustomer(accessToken);
+
+        List<AddressEntity> addresses   =   addressService.getAllAddress(customer);
         List<AddressList> addressesList =   new ArrayList<>();
 
         ListIterator<AddressEntity> listIterator = addresses.listIterator();
@@ -83,32 +105,36 @@ public class AddressController {
     }
 
     /**
-     * Delete Address
+     * delete address
      * @param addressUuid
      * @param authorization
      * @return ResponseEntity<DeleteAddressResponse>
      * @throws AuthorizationFailedException
      * @throws AddressNotFoundException
      */
-    @RequestMapping(method = RequestMethod.DELETE, path = "/address/delete/{address_id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.DELETE, path = "/address/{address_id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<DeleteAddressResponse> deleteAddress(@PathVariable("address_id") final String addressUuid, @RequestHeader(name = "authorization") final String authorization) throws AuthorizationFailedException, AddressNotFoundException{
         String accessToken = authorization.split("Bearer ")[1];
 
-        AddressEntity address = addressService.deleteAddress(addressUuid, accessToken);
+        CustomerEntity customer = customerService.getCustomer(accessToken);
 
-        DeleteAddressResponse deleteAddressResponse = new DeleteAddressResponse().id(UUID.fromString(address.getUuid()))
+        AddressEntity address = addressService.getAddressByUUID(addressUuid, customer);
+
+        AddressEntity deletedAddress = addressService.deleteAddress(address);
+
+        DeleteAddressResponse deleteAddressResponse = new DeleteAddressResponse().id(UUID.fromString(deletedAddress.getUuid()))
                 .status("ADDRESS DELETED SUCCESSFULLY");
 
         return new ResponseEntity<DeleteAddressResponse>(deleteAddressResponse, HttpStatus.OK);
     }
 
     /**
-     * Fetch states
+     * get states
      * @return ResponseEntity<StatesListResponse>
      */
     @RequestMapping(method = RequestMethod.GET, path = "/states", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<StatesListResponse> getStates(){
-        List<StateEntity> states   =   addressService.getStates();
+        List<StateEntity> states   =   addressService.getAllStates();
         List<StatesList> statesList =   new ArrayList<>();
 
         ListIterator<StateEntity> listIterator = states.listIterator();
